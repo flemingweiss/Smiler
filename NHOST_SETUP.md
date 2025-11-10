@@ -68,17 +68,19 @@ In Nhost dashboard:
 - Select your repo and branch
 
 ### 4. Configure Environment Variables
+**CRITICAL:** Add environment variables through the Dashboard UI, NOT in `nhost.toml`
+
 In Nhost dashboard: Settings → Environment Variables
 
-Add these:
-```
-MONGODB_URI=mongodb+srv://flemingweiss2_db_user:v1xqwRVMB0JwdIJm@waitlist.4atvy7r.mongodb.net/?appName=Waitlist
-RESEND_API_KEY=re_yqGKjRGj_Df5fcKCzYwu6WB1KPcSHwXrD
-FROM_EMAIL=Smiler <onboarding@resend.dev>
-ADMIN_EMAIL=flemingweiss2@gmail.com
-FRONTEND_URL=https://yourdomain.com
-NODE_ENV=production
-```
+Click "Add Variable" for each:
+- `MONGODB_URI` = `mongodb+srv://flemingweiss2_db_user:v1xqwRVMB0JwdIJm@waitlist.4atvy7r.mongodb.net/?appName=Waitlist`
+- `RESEND_API_KEY` = `re_yqGKjRGj_Df5fcKCzYwu6WB1KPcSHwXrD`
+- `FROM_EMAIL` = `Smiler <onboarding@resend.dev>`
+- `ADMIN_EMAIL` = `flemingweiss2@gmail.com`
+- `FRONTEND_URL` = `https://yourdomain.com`
+- `NODE_ENV` = `production`
+
+**Detailed guide:** See [NHOST_ENV_SETUP.md](NHOST_ENV_SETUP.md)
 
 ### 5. Push to GitHub
 ```bash

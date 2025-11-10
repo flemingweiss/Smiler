@@ -1,6 +1,23 @@
 [global]
 # Nhost Configuration for Smiler Waitlist
 
+[hasura]
+# Hasura version (required even if not using GraphQL)
+version = "v2.36.0"
+
+[hasura.settings]
+# Minimal Hasura settings
+corsDomain = ["*"]
+devMode = false
+
+[auth]
+# Minimal auth settings (required)
+version = "0.21.2"
+
+[postgres]
+# PostgreSQL version (required by Nhost)
+version = "14.6-20230312-1"
+
 [functions]
 # Node.js version for serverless functions
 node_version = 18

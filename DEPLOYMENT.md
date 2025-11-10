@@ -39,19 +39,24 @@ This guide covers deploying your Smiler waitlist website using **Option 2: Split
 6. Set root directory to `/` (default)
 
 ### Step 4: Configure Environment Variables
-In Nhost dashboard, go to "Settings" → "Environment Variables"
+**IMPORTANT:** Environment variables MUST be set through the Nhost Dashboard UI, NOT in `nhost.toml`
 
-Add these variables:
+In Nhost dashboard:
+1. Go to "Settings" → "Environment Variables"
+2. Click "Add Variable" for each variable below
+3. Enter key and value for each:
 
-```
-MONGODB_URI=mongodb+srv://flemingweiss2_db_user:v1xqwRVMB0JwdIJm@waitlist.4atvy7r.mongodb.net/?appName=Waitlist
-RESEND_API_KEY=re_yqGKjRGj_Df5fcKCzYwu6WB1KPcSHwXrD
-FROM_EMAIL=Smiler <onboarding@resend.dev>
-ADMIN_EMAIL=flemingweiss2@gmail.com
-FRONTEND_URL=https://yourdomain.com
-```
+**Variables to add:**
+- `MONGODB_URI` = `mongodb+srv://flemingweiss2_db_user:v1xqwRVMB0JwdIJm@waitlist.4atvy7r.mongodb.net/?appName=Waitlist`
+- `RESEND_API_KEY` = `re_yqGKjRGj_Df5fcKCzYwu6WB1KPcSHwXrD`
+- `FROM_EMAIL` = `Smiler <onboarding@resend.dev>`
+- `ADMIN_EMAIL` = `flemingweiss2@gmail.com`
+- `FRONTEND_URL` = `https://yourdomain.com` (replace with your IONOS domain)
+- `NODE_ENV` = `production`
 
-**IMPORTANT:** Replace `https://yourdomain.com` with your actual IONOS domain!
+4. Click "Save" - Nhost will automatically redeploy
+
+**See [NHOST_ENV_SETUP.md](NHOST_ENV_SETUP.md) for detailed screenshots and step-by-step instructions.**
 
 ### Step 5: Push Your Code to GitHub
 If not already done, push your project to GitHub:
