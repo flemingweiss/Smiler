@@ -1,0 +1,21 @@
+[global]
+# Nhost Configuration for Smiler Waitlist
+
+[global.environment]
+# MongoDB Atlas Configuration
+MONGODB_URI = "mongodb+srv://flemingweiss2_db_user:v1xqwRVMB0JwdIJm@waitlist.4atvy7r.mongodb.net/?appName=Waitlist"
+
+# Resend Email Configuration
+RESEND_API_KEY = "re_yqGKjRGj_Df5fcKCzYwu6WB1KPcSHwXrD"
+FROM_EMAIL = "Smiler <onboarding@resend.dev>"
+ADMIN_EMAIL = "flemingweiss2@gmail.com"
+
+# Frontend URL (update with your IONOS domain)
+FRONTEND_URL = "http://localhost:5173"
+
+# Node Environment
+NODE_ENV = "production"
+
+[functions]
+# Node.js version for serverless functions
+node_version = 18
