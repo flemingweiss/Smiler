@@ -38,10 +38,10 @@ Add these in Vercel dashboard before deploying:
 
 | Variable | Value |
 |----------|-------|
-| `MONGODB_URI` | `mongodb+srv://flemingweiss2_db_user:v1xqwRVMB0JwdIJm@waitlist.4atvy7r.mongodb.net/?appName=Waitlist` |
-| `RESEND_API_KEY` | `re_yqGKjRGj_Df5fcKCzYwu6WB1KPcSHwXrD` |
-| `FROM_EMAIL` | `Smiler <onboarding@resend.dev>` |
-| `ADMIN_EMAIL` | `flemingweiss2@gmail.com` |
+| `MONGODB_URI` | `mongodb+srv://your_username:your_password@your_cluster.mongodb.net/?appName=YourApp` |
+| `RESEND_API_KEY` | `re_your_resend_api_key_here` |
+| `FROM_EMAIL` | `Your App <noreply@yourdomain.com>` |
+| `ADMIN_EMAIL` | `your-email@example.com` |
 | `NODE_ENV` | `production` |
 
 ### 4. Click "Deploy"

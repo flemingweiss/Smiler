@@ -48,10 +48,25 @@ async function connectToDatabase() {
  * Endpoint: POST /api/waitlist
  */
 export default async function handler(req, res) {
-  // Enable CORS
-  res.setHeader('Access-Control-Allow-Credentials', true);
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,POST');
+  // CORS Configuration - Only allow requests from specific origins
+  const allowedOrigins = [
+    'http://localhost:5173',  // Local development
+    'http://localhost:3000',  // Alternative local port
+    // Add your Vercel deployment URLs here:
+    // 'https://smiler-xxx.vercel.app',
+    // 'https://smiler-ten.vercel.app',
+    // 'https://yourdomain.com',  // Your custom domain
+  ];
+
+  const origin = req.headers.origin;
+
+  // For Vercel deployments on the same domain, allow same-origin requests
+  if (origin && (allowedOrigins.includes(origin) || origin.endsWith('.vercel.app'))) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+    res.setHeader('Access-Control-Allow-Credentials', true);
+  }
+
+  res.setHeader('Access-Control-Allow-Methods', 'POST,OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
   // Handle OPTIONS request for CORS preflight
