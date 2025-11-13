@@ -1,354 +1,125 @@
-# Smiler - IONOS Deployment Guide
+# Smiler - Vercel Deployment Guide
 
-This guide covers deploying your Smiler waitlist website using **Option 2: Split Deployment**
-- Frontend: IONOS Web Hosting
-- Backend: Nhost.io (Serverless Functions)
+This guide covers deploying your Smiler waitlist website to **Vercel** - the simplest deployment option!
+
+---
+
+## Why Vercel?
+
+- ✅ **Zero configuration** - No complex config files
+- ✅ **Full-stack deployment** - Frontend + API in one place
+- ✅ **Auto-deploy from GitHub** - Push to deploy
+- ✅ **Always-on** - No cold starts or sleep issues
+- ✅ **Free tier** - 100GB bandwidth, unlimited requests
+- ✅ **Fast edge network** - Global CDN included
 
 ---
 
 ## Prerequisites
 
-- [x] IONOS account with domain registered
-- [x] MongoDB Atlas account with database configured
+- [x] Vercel account (free)
+- [x] GitHub account
+- [x] MongoDB Atlas database configured
 - [x] Resend API key for email functionality
-- [ ] Nhost account (for backend hosting)
-- [ ] Git repository (for backend deployment)
 
 ---
 
-## Part 1: Deploy Backend to Nhost.io
+## Part 1: Deploy to Vercel
 
-### Step 1: Create Nhost Account
-1. Go to [nhost.io](https://nhost.io)
-2. Sign up with GitHub (recommended for easy deployment)
-3. No credit card required for free tier
+### Step 1: Create Vercel Account
+1. Go to [vercel.com](https://vercel.com)
+2. Click "Sign Up"
+3. Sign up with GitHub (recommended)
+4. Authorize Vercel to access your repositories
 
-### Step 2: Create New Nhost Project
-1. In Nhost dashboard, click "Create Project"
-2. Choose a project name (e.g., `smiler-backend`)
-3. Select a region closest to your users
-4. Choose **Free Tier**
-5. Click "Create Project"
+### Step 2: Import Your Project
+1. In Vercel dashboard, click "Add New..." → "Project"
+2. Select "Import Git Repository"
+3. Find your `Smiler` repository
+4. Click "Import"
 
-### Step 3: Connect Your GitHub Repository
-1. In your Nhost project dashboard, go to "Settings"
-2. Navigate to "Git" tab
-3. Click "Connect Repository"
-4. Select your GitHub repository
-5. Choose the branch to deploy from (usually `main`)
-6. Set root directory to `/` (default)
+### Step 3: Configure Project Settings
+Vercel will auto-detect your framework. Configure these settings:
 
-### Step 4: Configure Environment Variables
-**IMPORTANT:** Environment variables MUST be set through the Nhost Dashboard UI, NOT in `nhost.toml`
+**Framework Preset:** Vite
+**Root Directory:** `./` (leave default)
+**Build Command:** `npm run build` (or leave default)
+**Output Directory:** `dist` (should auto-detect)
+**Install Command:** `npm install` (should auto-detect)
 
-In Nhost dashboard:
-1. Go to "Settings" → "Environment Variables"
-2. Click "Add Variable" for each variable below
-3. Enter key and value for each:
+### Step 4: Add Environment Variables
+Click "Environment Variables" and add these:
 
-**Variables to add:**
-- `MONGODB_URI` = `mongodb+srv://flemingweiss2_db_user:v1xqwRVMB0JwdIJm@waitlist.4atvy7r.mongodb.net/?appName=Waitlist`
-- `RESEND_API_KEY` = `re_yqGKjRGj_Df5fcKCzYwu6WB1KPcSHwXrD`
-- `FROM_EMAIL` = `Smiler <onboarding@resend.dev>`
-- `ADMIN_EMAIL` = `flemingweiss2@gmail.com`
-- `FRONTEND_URL` = `https://yourdomain.com` (replace with your IONOS domain)
-- `NODE_ENV` = `production`
+| Name | Value |
+|------|-------|
+| `MONGODB_URI` | `mongodb+srv://flemingweiss2_db_user:v1xqwRVMB0JwdIJm@waitlist.4atvy7r.mongodb.net/?appName=Waitlist` |
+| `RESEND_API_KEY` | `re_yqGKjRGj_Df5fcKCzYwu6WB1KPcSHwXrD` |
+| `FROM_EMAIL` | `Smiler <onboarding@resend.dev>` |
+| `ADMIN_EMAIL` | `flemingweiss2@gmail.com` |
+| `NODE_ENV` | `production` |
 
-4. Click "Save" - Nhost will automatically redeploy
+**Note:** For `VITE_API_URL`, leave it empty or set to `/api` - not needed since API is on same domain!
 
-**See [NHOST_ENV_SETUP.md](NHOST_ENV_SETUP.md) for detailed screenshots and step-by-step instructions.**
+### Step 5: Deploy!
+1. Click "Deploy"
+2. Wait 1-2 minutes for deployment
+3. Vercel will provide you with a URL like: `https://smiler-xxx.vercel.app`
 
-### Step 5: Push Your Code to GitHub
-If not already done, push your project to GitHub:
-
-```bash
-git add .
-git commit -m "Add nhost serverless functions"
-git push origin main
-```
-
-Nhost will automatically detect the changes and deploy!
-
-### Step 6: Verify Deployment
-1. Go to "Deployments" tab in Nhost dashboard
-2. Wait for deployment to complete (2-5 minutes)
-3. Check logs for any errors
-4. Your endpoint will be available at:
-   ```
-   https://your-project-name.nhost.run/v1/functions/waitlist
-   ```
-
-**Save this URL - you'll need it for frontend configuration!**
+✅ **Done! Your site is live!**
 
 ---
 
-## Part 2: Build Frontend for Production
+## Part 2: Connect Custom Domain (Optional)
 
-### Step 1: Configure Frontend API URL
+If you want to use your IONOS domain:
 
-Update your `.env.production` file:
+### Option 1: Point DNS to Vercel
+1. In Vercel dashboard, go to your project
+2. Go to "Settings" → "Domains"
+3. Click "Add Domain"
+4. Enter your IONOS domain (e.g., `yourdomain.com`)
+5. Vercel will show you DNS records to add
 
-```bash
-VITE_API_URL=https://your-project-name.nhost.run/v1/functions
-```
+6. In IONOS dashboard:
+   - Go to Domain settings
+   - Add the DNS records Vercel provided (usually A or CNAME records)
+   - Wait 5-30 minutes for DNS propagation
 
-Replace `your-project-name` with your actual Nhost project name!
+7. Vercel will automatically provision SSL certificate
 
-**Note:** The endpoint path is `/v1/functions/waitlist`, so your app will call:
-```
-VITE_API_URL + '/waitlist'
-```
-
-### Step 2: Update Frontend API Call (if needed)
-
-Check [src/App.jsx](src/App.jsx#L64-L65) - the API call should look like:
-
-```javascript
-const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001';
-const response = await fetch(`${apiUrl}/api/waitlist`, {  // ← Change this
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({ email })
-});
-```
-
-**Update to:**
-```javascript
-const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001';
-const response = await fetch(`${apiUrl}/waitlist`, {  // ← No /api prefix
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({ email })
-});
-```
-
-### Step 3: Build Frontend
-
-Run the build command:
-
-```bash
-npm run build:frontend
-```
-
-This creates a `dist` folder with optimized static files:
-```
-dist/
-├── index.html
-├── assets/
-│   ├── index-[hash].js
-│   ├── index-[hash].css
-│   └── ...
-└── assets/ (your images)
-```
+### Option 2: Use Vercel's Free Domain
+Just use the `https://smiler-xxx.vercel.app` domain Vercel provides!
 
 ---
 
-## Part 3: Deploy Frontend to IONOS
+## Part 3: Test Your Deployment
 
-### Step 1: Access IONOS Web Hosting
-1. Log in to [IONOS Control Panel](https://www.ionos.com/login)
-2. Navigate to your web hosting package
-3. Go to "Webspace" or "File Manager"
+### Step 1: Visit Your Site
+Go to your Vercel URL (e.g., `https://smiler-xxx.vercel.app`)
 
-### Step 2: Upload via FTP
+### Step 2: Test Waitlist Form
+1. Enter an email address
+2. Submit the form
+3. Check for success message
+4. Verify confirmation email arrives
+5. Check admin notification email
 
-#### Option A: IONOS File Manager (Easy)
-1. Open IONOS File Manager in browser
-2. Navigate to your domain's root directory (usually `/`)
-3. Upload ALL contents of the `dist` folder:
-   - Drag and drop all files from `dist/` folder
-   - Make sure `index.html` is in the root
-   - Upload the `assets` folder with all subfolders
+### Step 3: Test Duplicate Prevention
+1. Try submitting the same email again
+2. Should show: "You're already on the waitlist!"
 
-#### Option B: FTP Client (Recommended for large files)
-1. Download FileZilla or Cyberduck
-2. Get FTP credentials from IONOS:
-   - Host: Your IONOS FTP server
-   - Username: Your IONOS username
-   - Password: Your IONOS password
-   - Port: 21 (or 22 for SFTP)
-
-3. Connect and upload:
-   - Navigate to your domain's root folder
-   - Upload ALL contents of `dist/` folder
-   - Verify all files transferred successfully
-
-### Step 3: Configure Domain
-1. In IONOS dashboard, ensure your domain points to the correct directory
-2. If you have multiple domains, make sure the right one is selected
-3. **SSL Certificate:** Enable free SSL in IONOS settings (important!)
-
----
-
-## Part 4: Final Configuration
-
-### Step 1: Update Backend FRONTEND_URL
-Now that you know your IONOS domain, update Nhost:
-
-1. Go to your Nhost dashboard
-2. Navigate to "Settings" → "Environment Variables"
-3. Update the `FRONTEND_URL` variable:
-   ```
-   FRONTEND_URL=https://yourdomain.com
-   ```
-4. Save changes (Nhost will automatically redeploy)
-
-### Step 2: Test Your Deployment
-
-1. **Visit your IONOS domain:** `https://yourdomain.com`
-2. **Test the waitlist form:**
-   - Enter an email address
-   - Submit the form
-   - Check for success message
-3. **Check email delivery:**
-   - Verify confirmation email arrives
-   - Check admin notification email
-4. **Test duplicate prevention:**
-   - Try submitting the same email again
-   - Should show "You're already on the waitlist!"
-
-### Step 3: Monitor Backend Logs
-In your Nhost dashboard:
-1. Navigate to "Logs" tab
-2. Filter by "Functions"
-3. Monitor real-time logs
-
-Look for:
-- ✅ Function execution started
-- ✅ MongoDB Atlas connected successfully
-- ✅ Email saved to database
-- ✅ Emails sent via Resend
-
----
-
-## Troubleshooting
-
-### Issue: "Failed to process your request"
-**Solution:** Check Nhost function logs for errors. Common causes:
-- Invalid MONGODB_URI
-- Invalid RESEND_API_KEY
-- Missing environment variables
-
-### Issue: CORS Error in Browser Console
-**Solution:**
-Nhost functions automatically handle CORS. If you see CORS errors:
-1. Verify your frontend is calling the correct endpoint
-2. Check that `FRONTEND_URL` is set correctly in Nhost
-3. Ensure you're using HTTPS for your IONOS domain
-
-### Issue: Emails Not Sending
-**Solution:**
-1. Verify `RESEND_API_KEY` is correct in Nhost environment
-2. Check Resend dashboard for API usage/errors
-3. Verify `FROM_EMAIL` domain is verified in Resend
-4. Check Nhost function logs for Resend API errors
-
-### Issue: 404 Error on Frontend Routes
-**Solution:** IONOS might need `.htaccess` for SPA routing:
-
-Create `.htaccess` in your dist folder before uploading:
-```apache
-<IfModule mod_rewrite.c>
-  RewriteEngine On
-  RewriteBase /
-  RewriteRule ^index\.html$ - [L]
-  RewriteCond %{REQUEST_FILENAME} !-f
-  RewriteCond %{REQUEST_FILENAME} !-d
-  RewriteRule . /index.html [L]
-</IfModule>
-```
-
-### Issue: Cold Starts / Slow First Request
-**Note:** Nhost serverless functions have cold starts (~2-3 seconds)
-- First request after inactivity takes longer
-- This is normal behavior for serverless functions
-- Subsequent requests are faster (under 1 second)
-- Free tier projects pause after 7 days of inactivity
-
----
-
-## Production Checklist
-
-- [ ] Backend deployed to Nhost
-- [ ] All environment variables configured correctly
-- [ ] GitHub repository connected to Nhost
-- [ ] Backend URL saved and documented
-- [ ] Frontend API call updated (removed `/api` prefix)
-- [ ] Frontend built with correct API URL
-- [ ] Frontend uploaded to IONOS
-- [ ] Domain SSL certificate enabled
-- [ ] Waitlist form tested successfully
-- [ ] Email delivery confirmed (user + admin)
-- [ ] Duplicate email prevention working
-- [ ] MongoDB storing entries correctly
-
----
-
-## Maintenance & Updates
-
-### Updating Frontend
-1. Make changes to `src/` files
-2. Run `npm run build:frontend`
-3. Upload new `dist/` contents to IONOS via FTP
-
-### Updating Backend
-1. Make changes to `functions/` files
-2. Commit and push to GitHub:
-   ```bash
-   git add .
-   git commit -m "Update backend functions"
-   git push origin main
-   ```
-3. Nhost automatically deploys from GitHub
-4. Monitor deployment in Nhost dashboard
-
-### Monitoring
-- **MongoDB:** Check [MongoDB Atlas Dashboard](https://cloud.mongodb.com/)
-- **Emails:** Check [Resend Dashboard](https://resend.com/emails)
-- **Backend:** Check Nhost Logs in dashboard (filter by "Functions")
-- **Frontend:** Use browser DevTools console
-
----
-
-## Cost Summary
-
-### Current Setup (Option 2):
-- **Frontend (IONOS):** Included with your hosting plan
-- **Backend (Nhost):** Free tier (1 project, pauses after 7 days inactivity) or $15/month for Starter (always-on)
-- **MongoDB Atlas:** Free tier (512 MB storage, plenty for a waitlist)
-- **Resend:** Free tier (100 emails/day, 3,000 emails/month)
-
-**Total Monthly Cost:** $0 (completely free)
-
-**If you need always-on:** $15/month for Nhost Starter plan
-
----
-
-## Nhost Free Tier Limitations
-
-- **1 project** maximum
-- **1 GB-hour** of function execution per month (sufficient for most waitlists)
-- **Cold starts:** 2-3 seconds for first request after inactivity
-- **Auto-pause:** Projects pause after 7 days of no activity
-- **No custom domains** on Functions (use Nhost subdomain)
-
-**Free tier is perfect for:**
-- Testing and development
-- Low-traffic hobby projects
-- MVP/proof of concept
-
-**Upgrade to Starter if you need:**
-- Multiple projects
-- Faster cold starts
-- Always-on availability
-- Higher execution limits
+### Step 4: Check Function Logs
+In Vercel dashboard:
+1. Go to your project
+2. Click "Functions" tab
+3. Click on `/api/waitlist`
+4. View real-time logs
 
 ---
 
 ## Local Development
 
-### Option 1: Use Original Express Server
-For local development, you can still use your original Express server:
+Everything works exactly as before:
 
 ```bash
 # Terminal 1: Start backend
@@ -358,45 +129,225 @@ npm run dev:backend
 npm run dev:frontend
 ```
 
-The Express server ([server/index.js](server/index.js)) still works for local development!
+Your Express server [server/index.js](server/index.js) still works for local development!
 
-### Option 2: Use Nhost CLI
-To test with Nhost functions locally:
+---
+
+## Updating Your Deployment
+
+### Automatic Deployment
+Just push to GitHub - Vercel auto-deploys!
 
 ```bash
-# Install Nhost CLI
-npm install -g nhost
-
-# Start local Nhost environment
-nhost up
-
-# Functions available at:
-# http://localhost:1337/v1/functions/waitlist
+git add .
+git commit -m "Update website"
+git push origin master
 ```
+
+Vercel will:
+1. Detect the push
+2. Build your project
+3. Deploy automatically
+4. Show deployment status in dashboard
+
+### Manual Deployment
+In Vercel dashboard:
+1. Go to "Deployments" tab
+2. Click "Redeploy" on any previous deployment
+
+---
+
+## Project Structure
+
+Your project is now set up for Vercel:
+
+```
+your-project/
+├── api/                    # Serverless functions
+│   └── waitlist.js         # POST /api/waitlist endpoint
+├── src/                    # Frontend React code
+│   ├── App.jsx
+│   └── ...
+├── public/                 # Static assets
+├── server/                 # Local dev Express server (not deployed)
+│   └── index.js
+├── vercel.json             # Vercel configuration
+├── package.json
+└── vite.config.js
+```
+
+**What gets deployed:**
+- ✅ Frontend (`src/`, `public/`) → Static site
+- ✅ API functions (`api/`) → Serverless functions
+- ❌ Express server (`server/`) → Only for local dev
+
+---
+
+## Monitoring & Logs
+
+### View Function Logs
+1. Go to Vercel dashboard
+2. Select your project
+3. Click "Functions" → Select function
+4. View real-time execution logs
+
+### View Deployment Logs
+1. Go to "Deployments" tab
+2. Click on any deployment
+3. View build and runtime logs
+
+### Analytics
+1. Go to "Analytics" tab
+2. View page views, function calls, performance metrics
+
+---
+
+## Cost Summary
+
+### Vercel Free Tier (Hobby Plan):
+- ✅ **100 GB bandwidth** per month
+- ✅ **Unlimited serverless function executions**
+- ✅ **100 GB hours** function execution time
+- ✅ **Automatic HTTPS** with SSL
+- ✅ **Global CDN** included
+- ✅ **Always-on** - No cold starts or sleep
+- ✅ **1000 GB bandwidth** when using commercial assets
+
+### Other Services:
+- **MongoDB Atlas:** Free tier (512 MB storage)
+- **Resend:** Free tier (100 emails/day, 3,000/month)
+
+**Total Monthly Cost:** $0 (completely free)
+
+**When to Upgrade ($20/month Pro plan):**
+- Need more than 100 GB bandwidth
+- Need team collaboration features
+- Need password-protected deployments
+
+---
+
+## Troubleshooting
+
+### Issue: "Function execution timeout"
+**Solution:** Vercel free tier has 10-second timeout for functions. This should be plenty for email + MongoDB operations. If you hit this limit, upgrade to Pro (60-second timeout).
+
+### Issue: "Environment variable not defined"
+**Solution:**
+1. Go to Vercel dashboard → Settings → Environment Variables
+2. Verify all variables are added
+3. Redeploy project after adding variables
+
+### Issue: "MongoDB connection failed"
+**Solution:**
+1. Check `MONGODB_URI` is correct in Vercel environment variables
+2. In MongoDB Atlas, whitelist all IPs: `0.0.0.0/0`
+   - Go to Network Access
+   - Click "Add IP Address"
+   - Select "Allow Access from Anywhere"
+
+### Issue: "Emails not sending"
+**Solution:**
+1. Verify `RESEND_API_KEY` in Vercel environment variables
+2. Check Resend dashboard for API usage and errors
+3. Verify `FROM_EMAIL` domain is verified in Resend
+
+### Issue: CORS errors
+**Solution:** The API function already has CORS headers configured. If you still see errors:
+1. Clear browser cache
+2. Check browser console for specific error message
+3. Verify function is deploying correctly in Vercel dashboard
+
+---
+
+## Production Checklist
+
+- [ ] Project deployed to Vercel
+- [ ] All environment variables configured
+- [ ] Custom domain connected (optional)
+- [ ] SSL certificate active (automatic)
+- [ ] Waitlist form tested successfully
+- [ ] Email delivery confirmed (user + admin)
+- [ ] Duplicate email prevention working
+- [ ] MongoDB storing entries correctly
+- [ ] Function logs showing successful executions
+
+---
+
+## Vercel CLI (Optional)
+
+For advanced users, install Vercel CLI:
+
+```bash
+# Install globally
+npm install -g vercel
+
+# Login
+vercel login
+
+# Deploy from command line
+vercel
+
+# Deploy to production
+vercel --prod
+
+# View logs
+vercel logs
+
+# List deployments
+vercel ls
+```
+
+---
+
+## Migration from Other Services
+
+If you were using Nhost or Render before:
+
+### From Nhost:
+- ✅ Remove `nhost/` folder and `functions/` folder (no longer needed)
+- ✅ API is now in `/api` folder
+- ✅ Same environment variables (just copy to Vercel)
+
+### From Render:
+- ✅ Keep Express server for local dev
+- ✅ Vercel deploys from `/api` folder instead
+- ✅ Same environment variables (just copy to Vercel)
 
 ---
 
 ## Support Resources
 
-- **IONOS Support:** [ionos.com/help](https://www.ionos.com/help)
-- **Nhost Docs:** [docs.nhost.io](https://docs.nhost.io)
-- **Nhost Discord:** [discord.gg/9V7Qb2U](https://discord.gg/9V7Qb2U)
+- **Vercel Docs:** [vercel.com/docs](https://vercel.com/docs)
+- **Vercel Support:** [vercel.com/support](https://vercel.com/support)
 - **MongoDB Atlas:** [docs.atlas.mongodb.com](https://docs.atlas.mongodb.com)
 - **Resend Docs:** [resend.com/docs](https://resend.com/docs)
 
 ---
 
+## Why Vercel is Perfect for This Project
+
+1. **Simplicity** - No config files needed (vercel.json is optional)
+2. **Speed** - Global edge network, instant deployments
+3. **Always-on** - No cold starts or sleep like Render/Nhost free tiers
+4. **Full-stack** - Frontend + API in one deployment
+5. **Git integration** - Push to deploy automatically
+6. **Generous free tier** - Perfect for waitlist/landing pages
+
+---
+
 ## Questions?
 
-If you encounter issues not covered in this guide:
-1. Check Nhost function logs first (in dashboard under "Logs")
+If you encounter issues:
+1. Check Vercel function logs (Dashboard → Functions → waitlist)
 2. Check browser console for frontend errors
-3. Verify all environment variables are correct
-4. Test backend endpoint directly using curl or Postman:
+3. Verify all environment variables in Vercel
+4. Test API directly:
    ```bash
-   curl -X POST https://your-project.nhost.run/v1/functions/waitlist \
+   curl -X POST https://your-site.vercel.app/api/waitlist \
      -H "Content-Type: application/json" \
      -d '{"email":"test@example.com"}'
    ```
 
 **Good luck with your deployment! 🚀**
+
+**This is the easiest deployment option - you'll be live in under 5 minutes!**

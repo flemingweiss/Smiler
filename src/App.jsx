@@ -61,11 +61,10 @@ function App() {
     setIsValidEmail(true)
 
     try {
+      // Vercel deployment: use /api/waitlist directly (same domain)
+      // Local dev: use localhost:3001/api/waitlist
       const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001';
-      // For nhost: use /waitlist (VITE_API_URL includes /v1/functions)
-      // For local dev: use /api/waitlist
-      const endpoint = apiUrl.includes('nhost.run') ? '/waitlist' : '/api/waitlist';
-      const response = await fetch(`${apiUrl}${endpoint}`, {
+      const response = await fetch(`${apiUrl}/api/waitlist`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
