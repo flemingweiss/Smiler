@@ -5,6 +5,7 @@
 # Hasura version (required even if not using GraphQL)
 version = "v2.36.0"
 adminSecret = "nhost-admin-secret"
+webhookSecret = "nhost-webhook-secret"
 
 [hasura.settings]
 # Minimal Hasura settings
